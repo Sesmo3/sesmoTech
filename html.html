@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Learn HTML - SesmoTech</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #001f3f;
+      color: white;
+      margin: 0;
+      padding: 2rem;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    h1 {
+      color: #00d9ff;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    h2 {
+      color: #00aabb;
+      margin-top: 1.5rem;
+    }
+    p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+    pre {
+      background-color: #002f5f;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 1rem;
+      color: #aaffff;
+    }
+    a.learn-link {
+      display: inline-block;
+      margin-top: 2rem;
+      background: #00d9ff;
+      color: black;
+      font-weight: bold;
+      padding: 0.7rem 1.4rem;
+      border-radius: 30px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+    a.learn-link:hover {
+      background-color: #00aacc;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-top: 3rem;
+      background-color: #ff5f5f;
+      color: white;
+      padding: 0.7rem 1.4rem;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    .back-btn:hover {
+      background-color: #e44;
+    }
+    .coming-soon {
+      margin-top: 3rem;
+      font-style: italic;
+      color: #bbb;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Learn HTML</h1>
+
+  <p>HTML (HyperText Markup Language) is the standard language for creating webpages and web applications. It provides the structure of a page using elements and tags.</p>
+
+  <h2>Basic Structure</h2>
+  <p>Every HTML document starts with a <code>&lt;!DOCTYPE html&gt;</code> declaration, followed by <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, and <code>&lt;body&gt;</code> elements.</p>
+
+  <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Page Title&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;My First Heading&lt;/h1&gt;
+    &lt;p&gt;My first paragraph.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+  </pre>
+
+  <h2>Common HTML Tags</h2>
+  <ul>
+    <li><code>&lt;h1&gt;</code> to <code>&lt;h6&gt;</code> – Headings</li>
+    <li><code>&lt;p&gt;</code> – Paragraph</li>
+    <li><code>&lt;a&gt;</code> – Link</li>
+    <li><code>&lt;img&gt;</code> – Image</li>
+    <li><code>&lt;div&gt;</code> – Section container</li>
+    <li><code>&lt;span&gt;</code> – Inline container</li>
+  </ul>
+
+  <h2>Example: Link</h2>
+  <pre>
+&lt;a href="https://www.example.com"&gt;Visit Example&lt;/a&gt;
+  </pre>
+
+  <h2>Example: Image</h2>
+  <pre>
+&lt;img src="image.jpg" alt="My Image"&gt;
+  </pre>
+
+  <a href="https://www.w3schools.com/html/" target="_blank" rel="noopener noreferrer" class="learn-link">
+    📘 Learn More on W3Schools
+  </a>
+
+  <div class="coming-soon">🔜 More content and interactive lessons coming soon...</div>
+
+  <a href="index.html" class="back-btn">⬅ Back to Home</a>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Chat Bot | SesmoTech</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #000428, #004e92);
+      margin: 0;
+      padding: 0;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      padding: 1rem;
+      text-align: center;
+      background-color: #001f3f;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border-radius: 10px;
+      line-height: 1.4;
+    }
+
+    .user {
+      align-self: flex-end;
+      background-color: #00d9ff;
+      color: black;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background-color: #022b3a;
+    }
+
+    .input-area {
+      display: flex;
+      padding: 1rem;
+      background: #011627;
+    }
+
+    .input-area input {
+      flex: 1;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      margin-right: 0.5rem;
+    }
+
+    .input-area button {
+      padding: 0.75rem 1rem;
+      background-color: #00d9ff;
+      color: black;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .back-btn {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      padding: 0.5rem 1rem;
+      background: #00d9ff;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <button class="back-btn" onclick="window.location.href='index.html'">← Back</button>
+  <header>
+    <h1>AI Chat Bot</h1>
+  </header>
+
+  <div class="chat-container" id="chat"></div>
+
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Ask me anything..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    const chatContainer = document.getElementById('chat');
+    const input = document.getElementById('userInput');
+
+    function sendMessage() {
+      const msg = input.value.trim();
+      if (msg === '') return;
+
+      appendMessage(msg, 'user');
+      input.value = '';
+      setTimeout(() => {
+        const botReply = generateBotReply(msg);
+        appendMessage(botReply, 'bot');
+      }, 600);
+    }
+
+    function appendMessage(message, sender) {
+      const div = document.createElement('div');
+      div.classList.add('message', sender);
+      div.textContent = message;
+      chatContainer.appendChild(div);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function generateBotReply(userMsg) {
+      userMsg = userMsg.toLowerCase();
+
+      // Basic replies (you can add more here or replace with AI API)
+      if (userMsg.includes('hello') || userMsg.includes('hi')) {
+        return 'Hello! How can I help you today?';
+      } else if (userMsg.includes('html')) {
+        return 'HTML stands for HyperText Markup Language. You can learn more at www.w3schools.com/html.';
+      } else if (userMsg.includes('what is sesmotech')) {
+        return 'SesmoTech is your gateway to tech education, bots, and more!';
+      } else if (userMsg.includes('bye')) {
+        return 'Goodbye! Come back anytime 😊';
+      } else {
+        return 'I’m just a simple AI for now, but I’m always learning. Try asking about HTML, CSS, or SesmoTech!';
+      }
+    }
+
+    input.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
+</body>
+</html>

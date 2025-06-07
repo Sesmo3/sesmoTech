@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Learn CSS - SesmoTech</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #003049;
+      color: white;
+      margin: 0;
+      padding: 2rem;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    h1 {
+      color: #00d9ff;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    h2 {
+      color: #00aabb;
+      margin-top: 1.5rem;
+    }
+    p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+    pre {
+      background-color: #004b7d;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 1rem;
+      color: #aaffff;
+    }
+    a.learn-link {
+      display: inline-block;
+      margin-top: 2rem;
+      background: #00d9ff;
+      color: black;
+      font-weight: bold;
+      padding: 0.7rem 1.4rem;
+      border-radius: 30px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+    a.learn-link:hover {
+      background-color: #00aacc;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-top: 3rem;
+      background-color: #ff5f5f;
+      color: white;
+      padding: 0.7rem 1.4rem;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    .back-btn:hover {
+      background-color: #e44;
+    }
+    .coming-soon {
+      margin-top: 3rem;
+      font-style: italic;
+      color: #bbb;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Learn CSS</h1>
+
+  <p>CSS (Cascading Style Sheets) controls the style and layout of web pages. It describes how HTML elements should be displayed.</p>
+
+  <h2>Basic Syntax</h2>
+  <p>CSS rules consist of selectors and declaration blocks. The selector points to the HTML element to style, and declarations specify the property and value.</p>
+
+  <pre>
+selector {
+  property: value;
+}
+  </pre>
+
+  <h2>Example: Changing Text Color</h2>
+  <pre>
+p {
+  color: red;
+}
+  </pre>
+
+  <h2>Example: Background Color</h2>
+  <pre>
+body {
+  background-color: #f0f0f0;
+}
+  </pre>
+
+  <a href="https://www.w3schools.com/css/" target="_blank" rel="noopener noreferrer" class="learn-link">
+    📘 Learn More on W3Schools
+  </a>
+
+  <div class="coming-soon">🔜 More content and interactive lessons coming soon...</div>
+
+  <a href="index.html" class="back-btn">⬅ Back to Home</a>
+
+</body>
+</html>

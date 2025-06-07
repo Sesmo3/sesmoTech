@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>League Manager - Random Matchdays Fixture</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #000428;
+      color: white;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    h1 {
+      color: #00d9ff;
+      text-align: center;
+    }
+    input, button, select {
+      padding: 10px;
+      margin: 5px 0;
+      border: none;
+      border-radius: 5px;
+    }
+    input[type="text"] {
+      width: 200px;
+    }
+    button {
+      background-color: #00d9ff;
+      color: black;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #00aacc;
+    }
+    .section {
+      margin: 2rem 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #fff;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #00d9ff;
+      color: #000;
+    }
+    @media (max-width: 600px) {
+      input[type="text"], button, select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>League Manager - Random Matchdays Fixture</h1>
+
+  <div class="section">
+    <h3>Add Participant</h3>
+    <input type="text" id="teamInput" placeholder="Enter Team Name"/>
+    <button onclick="addTeam()">Add Team</button>
+    <ul id="teamList"></ul>
+  </div>
+
+  <div class="section">
+    <h3>Delete Team</h3>
+    <select id="deleteTeamSelect"></select>
+    <button onclick="deleteTeam()">Delete Selected Team</button>
+  </div>
+
+  <div class="section">
+    <h3>Generate Fixtures (Random Matchdays)</h3>
+    <button onclick="generateFixtures()">Generate</button>
+    <div id="fixtures"></div>
+  </div>
+
+  <div class="section">
+    <h3>Enter or Edit Match Result</h3>
+    <select id="matchSelect"></select><br/>
+    <label>Score: </label>
+    <input type="number" id="score1" placeholder="Team 1 Score" />
+    <input type="number" id="score2" placeholder="Team 2 Score" />
+    <button onclick="submitResult()">Submit/Update</button>
+    <button onclick="deleteResult()">Delete Result</button>
+  </div>
+
+  <div class="section">
+    <h3>League Table</h3>
+    <table id="table">
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th>MP</th>
+          <th>W</th>
+          <th>D</th>
+          <th>L</th>
+          <th>Pts</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    let teams = [];
+    let fixtures = [];  // Will be array of rounds, each round is array of matches
+    let results = {};
+    let table = {};
+
+    function addTeam() {
+      const input = document.getElementById("teamInput");
+      const name = input.value.trim();
+      if (name && !teams.includes(name)) {
+        teams.push(name);
+        table[name] = { MP: 0, W: 0, D: 0, L: 0, Pts: 0 };
+        updateTeamList();
+        updateDeleteTeamSelect();
+      }
+      input.value = "";
+    }
+
+    function updateTeamList() {
+      document.getElementById("teamList").innerHTML = teams.map(t => `<li>${t}</li>`).join('');
+    }
+
+    function updateDeleteTeamSelect() {
+      document.getElementById("deleteTeamSelect").innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
+    }
+
+    function deleteTeam() {
+      const selected = document.getElementById("deleteTeamSelect").value;
+      if (!selected) return;
+
+      // Remove team
+      teams = teams.filter(t => t !== selected);
+      delete table[selected];
+
+      // Remove related fixtures (all rounds)
+      fixtures = fixtures.map(round => round.filter(match => !match.includes(selected)));
+
+      // Remove results related to this team
+      Object.keys(results).forEach(key => {
+        const [t1, t2] = key.split(" vs ");
+        if (t1 === selected || t2 === selected) {
+          deleteResultByKey(key);
+        }
+      });
+
+      updateTeamList();
+      updateDeleteTeamSelect();
+      updateMatchSelect();
+      updateTable();
+      displayFixtures();
+    }
+
+    // Utility shuffle array
+    function shuffle(arr) {
+      let a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    // Generate round-based fixtures, each team 1 match per round, randomized
+    function generateFixtures() {
+      fixtures = [];
+      if (teams.length < 2) {
+        alert("Add at least 2 teams to generate fixtures.");
+        return;
+      }
+
+      let tempTeams = shuffle(teams);
+
+      // If odd number, add bye (null)
+      if (tempTeams.length % 2 !== 0) {
+        tempTeams.push(null);
+      }
+
+      const roundsCount = tempTeams.length - 1;
+      const matchesPerRound = tempTeams.length / 2;
+
+      // Create rounds array
+      for (let round = 0; round < roundsCount; round++) {
+        const roundMatches = [];
+        const used = new Set();
+
+        // We'll pair teams from shuffled list, but skip teams already matched in this round
+        // This simple approach tries to pick pairs without repeat in the same round
+
+        // Copy teams array for round
+        let roundTeams = tempTeams.slice();
+
+        // Rotate array except first element (classic round robin rotation)
+        if (round > 0) {
+          roundTeams = [roundTeams[0]].concat(roundTeams.slice(-round), roundTeams.slice(1, -round));
+        }
+
+        for (let i = 0; i < matchesPerRound; i++) {
+          let t1 = roundTeams[i];
+          let t2 = roundTeams[tempTeams.length - 1 - i];
+          if (t1 !== null && t2 !== null) {
+            roundMatches.push([t1, t2]);
+          }
+          // Ignore matches involving bye (null)
+        }
+
+        fixtures.push(roundMatches);
+      }
+
+      displayFixtures();
+      updateMatchSelect();
+    }
+
+    function displayFixtures() {
+      const container = document.getElementById("fixtures");
+      if (!fixtures.length) {
+        container.innerHTML = "<p>No fixtures generated yet.</p>";
+        return;
+      }
+      let html = "";
+      fixtures.forEach((roundMatches, i) => {
+        html += `<h4>Matchday ${i + 1}</h4>`;
+        roundMatches.forEach(match => {
+          html += `<p>${match[0]} vs ${match[1]}</p>`;
+        });
+      });
+      container.innerHTML = html;
+    }
+
+    function updateMatchSelect() {
+      const matchSelect = document.getElementById("matchSelect");
+      let options = [];
+      fixtures.forEach(round => {
+        round.forEach(match => {
+          options.push(`${match[0]} vs ${match[1]}`);
+        });
+      });
+      matchSelect.innerHTML = options.map(o => `<option value="${o}">${o}</option>`).join('');
+    }
+
+    function submitResult() {
+      const matchKey = document.getElementById("matchSelect").value;
+      const [team1, team2] = matchKey.split(" vs ");
+      const score1 = parseInt(document.getElementById("score1").value);
+      const score2 = parseInt(document.getElementById("score2").value);
+      if (isNaN(score1) || isNaN(score2)) {
+        alert("Please enter valid scores.");
+        return;
+      }
+
+      // If match already exists, remove old stats
+      if (results[matchKey]) {
+        removeStats(team1, team2, results[matchKey][0], results[matchKey][1]);
+      }
+
+      // Save new result and update table
+      results[matchKey] = [score1, score2];
+      updateStats(team1, team2, score1, score2);
+      updateTable();
+    }
+
+    function deleteResult() {
+      const matchKey = document.getElementById("matchSelect").value;
+      deleteResultByKey(matchKey);
+    }
+
+    function deleteResultByKey(matchKey) {
+      const [team1, team2] = matchKey.split(" vs ");
+      if (!results[matchKey]) return;
+      const [score1, score2] = results[matchKey];
+      removeStats(team1, team2, score1, score2);
+      delete results[matchKey];
+      updateTable();
+    }
+
+    function updateStats(team1, team2, score1, score2) {
+      table[team1].MP += 1;
+      table[team2].MP += 1;
+
+      if (score1 > score2) {
+        table[team1].W += 1;
+        table[team2].L += 1;
+        table[team1].Pts += 3;
+      } else if (score2 > score1) {
+        table[team2].W += 1;
+        table[team1].L += 1;
+        table[team2].Pts += 3;
+      } else {
+        table[team1].D += 1;
+        table[team2].D += 1;
+        table[team1].Pts += 1;
+        table[team2].Pts += 1;
+      }
+    }
+
+    function removeStats(team1, team2, score1, score2) {
+      table[team1].MP -= 1;
+      table[team2].MP -= 1;
+
+      if (score1 > score2) {
+        table[team1].W -= 1;
+        table[team2].L -= 1;
+        table[team1].Pts -= 3;
+      } else if (score2 > score1) {
+        table[team2].W -= 1;
+        table[team1].L -= 1;
+        table[team2].Pts -= 3;
+      } else {
+        table[team1].D -= 1;
+        table[team2].D -= 1;
+        table[team1].Pts -= 1;
+        table[team2].Pts -= 1;
+      }
+    }
+
+    function updateTable() {
+      const tbody = document.querySelector("#table tbody");
+      tbody.innerHTML = Object.entries(table).sort((a, b) => b[1].Pts - a[1].Pts).map(([team, t]) => {
+        return `<tr>
+          <td>${team}</td>
+          <td>${t.MP}</td>
+          <td>${t.W}</td>
+          <td>${t.D}</td>
+          <td>${t.L}</td>
+          <td>${t.Pts}</td>
+        </tr>`;
+      }).join('');
+    }
+  </script>
+</body>
+</html>
